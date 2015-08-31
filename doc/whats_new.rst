@@ -22,15 +22,28 @@ New features
 
    - The new class :class:`preprocessing.RobustScaler` provides an
      alternative to :class:`preprocessing.StandardScaler` for feature-wise
-     centering and range normalization that is robust to outliers. By `Thomas Unterthiner`_.
+     centering and range normalization that is robust to outliers.
+     By `Thomas Unterthiner`_.
 
    - The new class :class:`preprocessing.MaxAbsScaler` provides an
      alternative to :class:`preprocessing.MinMaxScaler` for feature-wise
      range normalization when the data is already centered or sparse.
      By `Thomas Unterthiner`_.
 
+   - The new class :class:`preprocessing.FunctionTransformer` turns a Python
+     function into a ``Pipeline``-compatible transformer object.
+     By Joe Jevnik.
+
+   - :class:`cross_validation.LabelShuffleSplit` generates random train-test
+     splits, similar to :class:`cross_validation.ShuffleSplit`, except that
+     the splits are conditioned on a label array. By `Brian McFee`_.
+
+
 Enhancements
 ............
+
+   - :class:`cluster.mean_shift_.MeanShift` now supports parallel execution,
+     as implemented in the ``mean_shift`` function. By `Martino Sorbaro`_.
 
    - :class:`naive_bayes.GaussianNB` now supports fitting with ``sample_weights``.
      By `Jan Hendrik Metzen`_.
@@ -69,6 +82,10 @@ Enhancements
      option, which has a simpler forumlar and interpretation.
      By Hanna Wallach and `Andreas Müller`_.
 
+   - Add ``class_weight`` parameter to automatically weight samples by class
+     frequency for :class:`linear_model.PassiveAgressiveClassifier`. By
+     `Trevor Stephens`_.
+
    - Added backlinks from the API reference pages to the user guide. By
      `Andreas Müller`_.
 
@@ -101,6 +118,15 @@ Enhancements
      with ``n_jobs > 1`` used with a large grid of parameters on a small
      dataset. By `Vlad Niculae`_, `Olivier Grisel`_ and `Loic Esteve`_.
 
+   - Improved speed (3 times per iteration) of
+     :class:`decomposition.DictLearning` with coordinate descent method
+     from :class:`linear_model.Lasso`. By `Arthur Mensch`_.
+
+   - Parallel processing (threaded) for queries of nearest neighbors
+     (using the ball-tree) by Nikolay Mayorov.
+
+   - Allow :func:`datasets.make_multilabel_classification` to output
+     a sparse ``y``. By Kashif Rasul.
 
 Bug fixes
 .........
@@ -120,8 +146,20 @@ Bug fixes
     - Fixed bug in :class:`linear_model.LogisticRegressionCV` where `penalty` was ignored
       in the final fit. By `Manoj Kumar`_.
 
-    - Fixed bug in :class:`ensemble.forest.ForestClassifier` while computing 
+    - Fixed bug in :class:`ensemble.forest.ForestClassifier` while computing
       oob_score and X is a sparse.csc_matrix. By `Ankur Ankan`_.
+
+    - All regressors now consistently handle and warn when given ``y`` that is of
+      shape ``(n_samples, 1)``. By `Andreas Müller`_.
+
+    - Fix in :class:`cluster.KMeans` cluster reassignment for sparse input by
+      `Lars Buitinck`_.
+
+    - Fixed a bug in :class:`lda.LDA` that could cause asymmetric covariance
+      matrices when using shrinkage. By `Martin Billinger`_.
+
+    - Fixed :func:`cross_validation.cross_val_predict` for estimators with
+      sparse predictions. By Buddha Prakash.
 
 API changes summary
 -------------------
@@ -624,7 +662,7 @@ API changes summary
 
     - The ``shuffle`` option of :class:`.linear_model.SGDClassifier`,
       :class:`linear_model.SGDRegressor`, :class:`linear_model.Perceptron`,
-      :class:`linear_model.PassiveAgressiveClassivier` and
+      :class:`linear_model.PassiveAgressiveClassifier` and
       :class:`linear_model.PassiveAgressiveRegressor` now defaults to ``True``.
 
     - :class:`cluster.DBSCAN` now uses a deterministic initialization. The
@@ -874,6 +912,9 @@ Enhancements
 
    - Add multi-output support to :class:`gaussian_process.GaussianProcess`
      by John Novak.
+
+   - Support for precomputed distance matrices in nearest neighbor estimators
+     by `Robert Layton`_ and `Joel Nothman`_.
 
    - Norm computations optimized for NumPy 1.6 and later versions by
      `Lars Buitinck`_. In particular, the k-means algorithm no longer
@@ -3561,3 +3602,5 @@ David Huard, Dave Morrill, Ed Schofield, Travis Oliphant, Pearu Peterson.
 .. _Thomas Unterthiner: https://github.com/untom
 
 .. _Loic Esteve: https://github.com/lesteve
+
+.. _Brian McFee: https://bmcfee.github.io
